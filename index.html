@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un pequeño mundo para Ashe ♡</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #102b24;
+    color: #fff4dc;
+    font-family: Georgia, serif;
+    overflow: hidden;
+}
+
+h1, h2, p {
+    margin-top: 0;
+}
+
+/* PANTALLA DE INICIO */
+
+.intro {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: linear-gradient(#142f28, #315c43);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 25px;
+}
+
+.intro h1 {
+    font-size: clamp(30px, 6vw, 48px);
+    color: #f8d99d;
+}
+
+.intro p {
+    max-width: 450px;
+    line-height: 1.7;
+}
+
+button {
+    background: #b52d32;
+    color: white;
+    border: 2px solid #f3c65c;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+button:hover {
+    background: #d44848;
+}
+
+/* JUEGO */
+
+.game {
+    display: none;
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+}
+
+.top {
+    text-align: center;
+    padding: 12px;
+    background: #17382e;
+    z-index: 2;
+}
+
+.top h2 {
+    color: #f5d69c;
+    margin-bottom: 5px;
+}
+
+.top p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.world {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 30%, #537c50 0%, transparent 55%),
+      linear-gradient(#264b38 0%, #345d40 55%, #18392d 100%);
+}
+
+.world::before {
+    content: "✦     🍃       ✧        🍄       ✦       🍃";
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 25px;
+    opacity: .7;
+}
+
+.path {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 34%;
+    background: #795b3c;
+    border-top: 7px solid #b28a55;
+}
+
+.path::before {
+    content: "";
+    position: absolute;
+    inset: 10px 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 60px,
+      #a47c4d 60px 63px
+    );
+    opacity: .3;
+}
+
+.tree {
+    position: absolute;
+    bottom: 28%;
+    font-size: clamp(45px, 7vw, 85px);
+    filter: drop-shadow(3px 5px 2px #102b24);
+}
+
+.t1 { left: 3%; }
+.t2 { left: 24%; }
+.t3 { left: 47%; }
+.t4 { left: 73%; }
+.t5 { right: 3%; }
+
+.firefly {
+    position: absolute;
+    color: #ffe9a1;
+    font-size: 22px;
+    animation: glow 2s infinite alternate;
+}
+
+.f1 { top: 24%; left: 15%; }
+.f2 { top: 38%; left: 45%; }
+.f3 { top: 20%; right: 20%; }
+.f4 { top: 52%; right: 8%; }
+
+@keyframes glow {
+    from { opacity: .3; }
+    to { opacity: 1; }
+}
+
+/* REGALOS */
+
+.gift {
+    position: absolute;
+    bottom: 29%;
+    font-size: 44px;
+    cursor: pointer;
+    transform: translateX(-50%);
+    filter: drop-shadow(2px 5px 2px #36251a);
+    transition: transform .2s;
+    z-index: 2;
+}
+
+.gift:hover {
+    transform: translateX(-50%) scale(1.15);
+}
+
+.gift small {
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    color: #fff1cf;
+}
+
+.g1 { left: 12%; }
+.g2 { left: 31%; }
+.g3 { left: 50%; }
+.g4 { left: 69%; }
+.g5 { left: 88%; }
+
+/* AVATAR */
+
+.player {
+    position: absolute;
+    bottom: 27%;
+    left: 5%;
+    width: 65px;
+    height: 100px;
+    transition: left .15s linear;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.player img {
+    width: 65px;
+    height: 100px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    display: block;
+}
+
+/* CONTROLES */
+
+.controls {
+    background: #17382e;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.controls button {
+    padding: 9px 16px;
+}
+
+/* CARTAS */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: #000b;
+    justify-content: center;
+    align-items: center;
+    padding: 18px;
+}
+
+.letter {
+    background: #f6e6c6;
+    color: #493a31;
+    border: 6px double #a67c4b;
+    border-radius: 8px;
+    padding: 25px;
+    width: min(450px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    box-shadow: 0 0 30px #0008;
+}
+
+.letter h2 {
+    color: #8e373b;
+}
+
+.letter p {
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.letter img {
+    width: 100%;
+    max-height: 230px;
+    object-fit: contain;
+    margin: 10px 0;
+    border: 4px solid #d1b68c;
+}
+
+.letter button {
+    margin-top: 10px;
+}
+
+@media(max-width: 600px) {
+    .tree {
+        font-size: 43px;
+    }
+
+    .gift {
+        font-size: 34px;
+    }
+
+    .player {
+        width: 55px;
+        height: 85px;
+    }
+
+    .player img {
+        width: 55px;
+        height: 85px;
+    }
+
+    .letter {
+        padding: 17px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MUSICA -->
+<audio id="music" loop>
+    <source src="cancion.mp3" type="audio/mpeg">
+</audio>
+
+<!-- PANTALLA DE INICIO -->
+
+<div class="intro" id="intro">
+
+    <h1>Un pequeño mundo para ti ♡</h1>
+
+    <p>
+       Ola amor, t hice un jueguito pq soy
+       pobre pero informática, espero te guste muxo :3
+    </p>
+
+    <button onclick="startGame()">
+        Entrar al bosque
+    </button>
+
+</div>
+
+<!-- JUEGO -->
+
+<div class="game" id="game">
+
+    <div class="top">
+        <h2>ashelandia</h2>
+        <p>Muévete con ← → y abre los regalos con ESPACIO</p>
+    </div>
+
+    <div class="world" id="world">
+
+        <!-- ARBOLES -->
+
+        <div class="tree t1">🌳</div>
+        <div class="tree t2">🌲</div>
+        <div class="tree t3">🌳</div>
+        <div class="tree t4">🌲</div>
+        <div class="tree t5">🌳</div>
+
+        <!-- LUCES -->
+
+        <div class="firefly f1">✧</div>
+        <div class="firefly f2">✦</div>
+        <div class="firefly f3">✧</div>
+        <div class="firefly f4">✦</div>
+
+        <!-- CAMINO -->
+
+        <div class="path"></div>
+
+        <!-- REGALOS -->
+
+        <div class="gift g1" data-gift="0">
+            🎁<small>Regalo 1</small>
+        </div>
+
+        <div class="gift g2" data-gift="1">
+            🎁<small>Regalo 2</small>
+        </div>
+
+        <div class="gift g3" data-gift="2">
+            🎁<small>Regalo 3</small>
+        </div>
+
+        <div class="gift g4" data-gift="3">
+            🎁<small>Regalo 4</small>
+        </div>
+
+        <div class="gift g5" data-gift="4">
+            🎁<small>Regalo 5</small>
+        </div>
+
+        <!-- AVATAR -->
+
+        <div class="player" id="player">
+            <img src="ashepixieelbueno2.png"
+                 alt="Avatar de Asher">
+        </div>
+
+    </div>
+
+    <!-- BOTONES -->
+
+    <div class="controls">
+        <button onclick="move(-1)">←</button>
+        <button onclick="interact()">Abrir regalo ♡</button>
+        <button onclick="move(1)">→</button>
+        <button onclick="toggleMusic()">♫ Música</button>
+    </div>
+
+</div>
+
+<!-- VENTANA DE CARTAS -->
+
+<div class="modal" id="modal">
+
+    <div class="letter">
+
+        <h2 id="letterTitle"></h2>
+
+        <img id="letterPhoto"
+             src=""
+             alt="Fotografía del recuerdo">
+
+        <p id="letterText"></p>
+
+        <button onclick="closeGift()">
+            Cerrar ♡
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+// ====================================
+// PERSONALIZA TUS CINCO REGALOS
+// ====================================
+
+const gifts = [
+
+    {
+        title: "Te conozco d otra vida",
+        photo: "ola.jpeg",
+        message: `A veces siento que no es posible que nos hayamos conocido solamente en esta vida. Mi alma ya supiera quién eres, como si de alguna manera ya te hubiera encontrado antes. Me gusta pensar que, en cualquier universo, en cualquier época y en cualquier versión de nosotras, siempre terminaríamos coincidiendo.
+
+Te amo con mi vida y no sé si existen palabras suficientes para explicar lo mucho que significas para mí. Eres de esas personas que llegan y dejan una marca que ni el tiempo ni la distancia pueden borrar. Si tuviera que volver a vivir mil vidas, espero encontrarme contigo en todas ellas.`
+    },
+
+    {
+        title: "Para alguien especial",
+        photo: "ola2.jpeg",
+        message: `Sé que a veces puedo ser una persona ausente, que quizá no siempre estoy tan presente como quisiera o que no siempre encuentro la manera de demostrarte cuánto te quiero. Pero quiero que sepas que, incluso en mis silencios, te llevo conmigo.
+
+Estás en mis pensamientos, en las pequeñas cosas que me recuerdan a ti, en las canciones que quisiera compartirte y en los momentos en los que me gustaría que estuvieras ahí. Mi ausencia nunca significa que hayas dejado de ser importante para mí.
+
+No importa cuánto tiempo pase sin vernos o cuánto cambien nuestras vidas, siempre habrá un lugar en mí que te pertenece. Te llevo conmigo incluso cuando no estoy a tu lado, y espero que nunca dudes de eso.`
+    },
+
+    {
+        title: "Un pedacito de nuestra historia",
+        photo: "ola5.jpeg",
+        message: `No sé si alguna vez te he dicho lo mucho que me gusta tenerte en mi vida. Desde que te conocí en secundaria, sentí que había encontrado algo que ni siquiera sabía que estaba buscando. Fue como encontrar una parte de mí que me faltaba, como si de alguna manera nuestras vidas hubieran estado destinadas a cruzarse.
+
+Me encanta saber que existes y que, entre tantas personas y tantos caminos diferentes, tuve la suerte de coincidir contigo. Me gusta tenerte para compartir mis risas, mis pensamientos, mis momentos felices y hasta esos días en los que no sé ni qué estoy haciendo.
+
+A veces pienso en cómo habría sido mi vida si nunca te hubiera conocido y me alegra muchísimo que esa no sea nuestra realidad. Gracias por llegar, por quedarte y por ser esa persona tan especial que hace que mis días sean un poquito más bonitos.
+
+Ojalá nunca olvides lo importante que eres para mí. Tenerte en mi vida es de esas casualidades que siempre voy a agradecer. ♡`
+    },
+
+    {
+        title: "Gracias por existir",
+        photo: "ola3.jpeg",
+        message: `Quiero que sepas que, sin importar lo que pase, lo que digan los demás o las vueltas que dé la vida, yo voy a seguir queriéndote. No necesito que todo el mundo entienda lo que significas para mí, porque hay sentimientos que simplemente no necesitan explicaciones.
+
+Siento que estoy destinada a encontrarte una y otra vez, a coincidir contigo incluso cuando nuestros caminos parezcan separarse. Y si algo tengo claro, es que siempre voy a desear que formes parte de mi vida. Quiero estar para ti en tus días buenos, en los difíciles, en tus nuevos comienzos y en cada versión de ti que todavía no conozco.
+
+Te amo con toda mi vida y espero que nunca olvides que aquí tienes a alguien que te quiere de una manera inmensa. Si existe algo después de esta vida, ojalá también podamos encontrarnos ahí. Y si hay mil vidas más, que en todas seamos amigas.`
+    },
+
+    {
+        title: "♡",
+        photo: "ola4.jpeg",
+        message: `FELIZ ASHEFEST MI VIDA ♡
+
+te amo siempre, y siempre es hoy, t debo 17 fours 
+
+TE AMO MUCHÍSIMO.`
+    }
+
+];
+
+// ====================================
+// VARIABLES DEL JUEGO
+// ====================================
+
+let playerPosition = 5;
+let currentGift = -1;
+let openedGifts = [];
+
+const player = document.getElementById("player");
+
+// ====================================
+// INICIAR JUEGO
+// ====================================
+
+function startGame() {
+
+    document.getElementById("intro").style.display = "none";
+
+    document.getElementById("game").style.display = "flex";
+
+    movePlayer();
+
+    const music = document.getElementById("music");
+
+    music.play().catch(() => {
+        console.log("Puedes activar la música con el botón.");
+    });
+
+}
+
+// ====================================
+// MOVIMIENTO DEL PERSONAJE
+// ====================================
+
+function move(direction) {
+
+    playerPosition += direction * 3;
+
+    if (playerPosition < 2) {
+        playerPosition = 2;
+    }
+
+    if (playerPosition > 96) {
+        playerPosition = 96;
+    }
+
+    movePlayer();
+
+}
+
+function movePlayer() {
+
+    player.style.left = playerPosition + "%";
+
+}
+
+// ====================================
+// INTERACTUAR CON LOS REGALOS
+// ====================================
+
+function interact() {
+
+    const giftPositions = [12, 31, 50, 69, 88];
+
+    let nearest = -1;
+    let distance = Infinity;
+
+    giftPositions.forEach((position, index) => {
+
+        const currentDistance = Math.abs(
+            playerPosition - position
+        );
+
+        if (currentDistance < distance) {
+            distance = currentDistance;
+            nearest = index;
+        }
+
+    });
+
+    if (distance <= 8) {
+        openGift(nearest);
+    } else {
+        alert("¡Acércate un poquito más a un regalo! ♡");
+    }
+
+}
+
+// ====================================
+// ABRIR REGALO
+// ====================================
+
+function openGift(index) {
+
+    currentGift = index;
+
+    const gift = gifts[index];
+
+    document.getElementById("letterTitle").textContent =
+        gift.title;
+
+    document.getElementById("letterText").textContent =
+        gift.message;
+
+    const photo = document.getElementById("letterPhoto");
+
+    photo.onerror = function() {
+        photo.style.display = "none";
+    };
+
+    if (gift.photo) {
+        photo.src = gift.photo;
+        photo.style.display = "block";
+    } else {
+        photo.removeAttribute("src");
+        photo.style.display = "none";
+    }
+
+    document.getElementById("modal").style.display = "flex";
+
+    if (!openedGifts.includes(index)) {
+        openedGifts.push(index);
+    }
+
+    document.querySelectorAll(".gift")[index].style.opacity = ".55";
+
+}
+
+// ====================================
+// CERRAR CARTA
+// ====================================
+
+function closeGift() {
+
+    document.getElementById("modal").style.display = "none";
+
+    currentGift = -1;
+
+    if (openedGifts.length === 5) {
+
+        document.querySelector(".top p").textContent =
+            "¡Has descubierto todos los regalos! ♡";
+
+    }
+
+}
+
+// ====================================
+// CONTROLES DEL TECLADO
+// ====================================
+
+document.addEventListener("keydown", function(event) {
+
+    if (document.getElementById("game").style.display !== "flex") {
+        return;
+    }
+
+    if (document.getElementById("modal").style.display === "flex") {
+
+        if (event.code === "Escape") {
+            closeGift();
+        }
+
+        return;
+
+    }
+
+    if (
+        event.key === "ArrowRight" ||
+        event.key.toLowerCase() === "d"
+    ) {
+        event.preventDefault();
+        move(1);
+    }
+
+    if (
+        event.key === "ArrowLeft" ||
+        event.key.toLowerCase() === "a"
+    ) {
+        event.preventDefault();
+        move(-1);
+    }
+
+    if (event.code === "Space") {
+        event.preventDefault();
+        interact();
+    }
+
+});
+
+// ====================================
+// MUSICA
+// ====================================
+
+function toggleMusic() {
+
+    const music = document.getElementById("music");
+
+    if (music.paused) {
+
+        music.play().catch(() => {
+            alert("No se pudo reproducir la canción.");
+        });
+
+    } else {
+
+        music.pause();
+
+    }
+
+}
+
+// ====================================
+// TOCAR REGALOS DIRECTAMENTE
+// ====================================
+
+document.querySelectorAll(".gift").forEach(gift => {
+
+    gift.addEventListener("click", function() {
+
+        openGift(Number(this.dataset.gift));
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
